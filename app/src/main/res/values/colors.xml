@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#6200EE</color>
+    <color name="primary_dark">#3700B3</color>
+    <color name="accent">#03DAC5</color>
+    <color name="background">#FAFAFA</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="on_surface">#212121</color>
+    <color name="editor_bg">#1E1E1E</color>
+    <color name="editor_text">#D4D4D4</color>
+    <color name="editor_toolbar">#333333</color>
+    <color name="file_explorer_bg">#FAFAFA</color>
+    <color name="file_explorer_item">#FFFFFF</color>
+    <color name="folder_icon">#FFA000</color>
+    <color name="file_icon">#42A5F5</color>
+</resources>

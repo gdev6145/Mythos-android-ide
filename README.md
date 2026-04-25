@@ -23,7 +23,9 @@ A self-contained Android app that integrates MYTHOS-26B with Termux for offline 
 - Termux embedded (no separate app needed)
 - MYTHOS-26B auto-setup on first run
 - Background model service with foreground notification
-- Code editor with dark theme
+- Code editor with dark theme, line numbers, and file save/load
+- File explorer for browsing and opening project files
+- Settings screen for editor and model preferences
 - Offline mode support
 
 ## Project Structure
@@ -38,18 +40,36 @@ mythos-android-ide/
 │       ├── java/com/mythos/ide/
 │       │   ├── MainActivity.kt
 │       │   ├── CodeEditorActivity.kt
-│       │   └── services/
-│       │       └── ModelService.kt
+│       │   ├── FileExplorerActivity.kt
+│       │   ├── SettingsActivity.kt
+│       │   ├── services/
+│       │   │   └── ModelService.kt
+│       │   └── util/
+│       │       └── TermuxBridge.kt
 │       └── res/
+│           ├── drawable/
+│           │   ├── ic_launcher_background.xml
+│           │   └── ic_launcher_foreground.xml
 │           ├── layout/
 │           │   ├── activity_main.xml
-│           │   └── activity_editor.xml
+│           │   ├── activity_editor.xml
+│           │   ├── activity_file_explorer.xml
+│           │   ├── activity_settings.xml
+│           │   └── item_file.xml
+│           ├── mipmap-anydpi-v26/
+│           │   ├── ic_launcher.xml
+│           │   └── ic_launcher_round.xml
 │           └── values/
+│               ├── colors.xml
 │               ├── strings.xml
 │               └── styles.xml
 ├── build.gradle
 ├── settings.gradle
-└── gradle.properties
+├── gradle.properties
+├── gradlew
+├── gradlew.bat
+└── gradle/wrapper/
+    └── gradle-wrapper.properties
 ```
 
 ## Building from Source
@@ -69,7 +89,7 @@ The APK will be generated at `app/build/outputs/apk/debug/app-debug.apk`.
 - **Language:** Kotlin
 - **Min SDK:** 24 (Android 7.0)
 - **Target SDK:** 34 (Android 14)
-- **Dependencies:** AndroidX AppCompat, Material Components, Kotlin Coroutines
+- **Dependencies:** AndroidX AppCompat, Material Components, RecyclerView, Kotlin Coroutines
 
 ## License
 
