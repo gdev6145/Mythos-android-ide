@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.mythos.ide.util.FileIcons
 import java.io.File
 import java.util.Locale
 
@@ -290,13 +291,14 @@ class FileAdapter(
         fun bind(file: File) {
             tvName.text = file.name
 
+            ivIcon.setImageResource(FileIcons.getIconResource(file))
+            ivIcon.setColorFilter(FileIcons.getIconTintColor(file))
+
             if (file.isDirectory) {
-                ivIcon.setImageResource(android.R.drawable.ic_menu_more)
                 val count = file.listFiles()?.size ?: 0
                 tvInfo.text = root.context.getString(R.string.file_info_dir, count)
                 root.setOnClickListener { onDirClick(file) }
             } else {
-                ivIcon.setImageResource(android.R.drawable.ic_menu_edit)
                 tvInfo.text = formatFileSize(file.length())
                 root.setOnClickListener { onFileClick(file) }
             }

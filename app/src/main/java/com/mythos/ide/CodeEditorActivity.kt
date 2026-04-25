@@ -529,6 +529,7 @@ class CodeEditorActivity : AppCompatActivity() {
     </div>
     <div class="status-bar">
         <span id="cursorInfo">Ln 1, Col 1</span>
+        <span id="docInfo"></span>
         <span id="langInfo">$language</span>
     </div>
 
@@ -695,6 +696,26 @@ class CodeEditorActivity : AppCompatActivity() {
             nums += i + '\n';
         }
         lineNumbers.textContent = nums;
+        updateDocInfo(text, lines.length);
+    }
+
+    function updateDocInfo(text, lineCount) {
+        var words = text.trim() ? text.trim().split(/\s+/).length : 0;
+        var chars = text.length;
+        document.getElementById('docInfo').textContent = lineCount + ' lines, ' + words + ' words, ' + chars + ' chars';
+    }
+
+    // ----- Auto-save -----
+    var autoSaveTimer = null;
+    function scheduleAutoSave() {
+        if (autoSaveTimer) clearTimeout(autoSaveTimer);
+        autoSaveTimer = setTimeout(function() {
+            if (modified && window.AndroidBridge) {
+                window.AndroidBridge.save(editor.innerText);
+                modified = false;
+                updateTitle();
+            }
+        }, 30000); // 30 second auto-save
     }
 
     // ----- Cursor info -----
@@ -856,6 +877,7 @@ class CodeEditorActivity : AppCompatActivity() {
         updateLineNumbers();
         modified = true;
         updateTitle();
+        scheduleAutoSave();
     });
 
     editor.addEventListener('keyup', updateCursorInfo);

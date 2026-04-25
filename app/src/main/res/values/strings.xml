@@ -98,6 +98,13 @@
     <string name="goto_line_hint">Line number</string>
     <string name="snippets_title">Insert Snippet</string>
 
+    <!-- Logcat -->
+    <string name="logcat_title">Logcat</string>
+    <string name="logcat_clear">Clear</string>
+    <string name="logcat_pause">Pause</string>
+    <string name="logcat_filter_hint">Filter by tag or message...</string>
+    <string name="action_logcat">Logcat</string>
+
     <!-- Settings -->
     <string name="settings_title">Settings</string>
     <string name="settings_section_editor">Editor</string>

@@ -34,6 +34,7 @@
         <activity android:name=".TerminalActivity" />
         <activity android:name=".NewProjectActivity" />
         <activity android:name=".GitActivity" />
+        <activity android:name=".LogcatActivity" />
 
         <service
             android:name=".services.ModelService"

@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnNewProject: Button
     private lateinit var btnTerminal: Button
     private lateinit var btnGit: Button
+    private lateinit var btnLogcat: Button
     private lateinit var btnSettings: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         btnNewProject = findViewById(R.id.btnNewProject)
         btnTerminal = findViewById(R.id.btnTerminal)
         btnGit = findViewById(R.id.btnGit)
+        btnLogcat = findViewById(R.id.btnLogcat)
         btnSettings = findViewById(R.id.btnSettings)
 
         btnOpenFiles.setOnClickListener {
@@ -60,6 +62,10 @@ class MainActivity : AppCompatActivity() {
 
         btnGit.setOnClickListener {
             startActivity(Intent(this, GitActivity::class.java))
+        }
+
+        btnLogcat.setOnClickListener {
+            startActivity(Intent(this, LogcatActivity::class.java))
         }
 
         btnSettings.setOnClickListener {
