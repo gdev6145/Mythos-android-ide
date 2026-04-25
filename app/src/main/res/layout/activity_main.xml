@@ -1,38 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="20dp"
-    android:gravity="center"
-    android:background="#ffffff">
+    android:background="@color/background"
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/statusText"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="#6200EE" />
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
 
-    <TextView
-        android:id="@+id/progressText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="@string/progress_install_prompt"
-        android:textSize="16sp" />
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/app_name"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="@color/primary" />
 
-    <Button
-        android:id="@+id/actionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="@string/action_install"
-        android:backgroundTint="#6200EE"
-        android:textColor="#FFFFFF"
-        android:paddingHorizontal="30dp"
-        android:paddingVertical="12dp" />
+        <TextView
+            android:id="@+id/progressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/progress_install_prompt"
+            android:textSize="15sp"
+            android:textColor="@color/on_surface"
+            android:gravity="center" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/actionButton"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/action_install"
+            android:backgroundTint="@color/primary"
+            android:textColor="@color/on_primary"
+            android:paddingVertical="12dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="24dp"
+            android:background="#E0E0E0" />
+
+        <Button
+            android:id="@+id/btnNewProject"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:text="@string/action_new_project"
+            android:backgroundTint="#4CAF50"
+            android:textColor="@color/on_primary"
+            android:paddingVertical="12dp" />
+
+        <Button
+            android:id="@+id/btnOpenFiles"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/action_open_files"
+            android:backgroundTint="#757575"
+            android:textColor="@color/on_primary"
+            android:paddingVertical="12dp" />
+
+        <Button
+            android:id="@+id/btnTerminal"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/action_terminal"
+            android:backgroundTint="#37474F"
+            android:textColor="@color/on_primary"
+            android:paddingVertical="12dp" />
+
+        <Button
+            android:id="@+id/btnGit"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/action_git"
+            android:backgroundTint="#F4511E"
+            android:textColor="@color/on_primary"
+            android:paddingVertical="12dp" />
+
+        <Button
+            android:id="@+id/btnLogcat"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/action_logcat"
+            android:backgroundTint="#795548"
+            android:textColor="@color/on_primary"
+            android:paddingVertical="12dp" />
+
+        <Button
+            android:id="@+id/btnSettings"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/action_settings"
+            android:backgroundTint="#757575"
+            android:textColor="@color/on_primary"
+            android:paddingVertical="12dp" />
+
+        <!-- Recent files -->
+        <TextView
+            android:id="@+id/tvRecentTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/recent_files_title"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/on_surface"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/llRecentFiles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+</ScrollView>

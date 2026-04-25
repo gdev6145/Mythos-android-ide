@@ -1,11 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MYTHOS IDE</string>
+
+    <!-- Main activity -->
     <string name="status_ready">MYTHOS is ready!</string>
     <string name="progress_ready">Model installed. Tap below to start.</string>
     <string name="progress_install_prompt">Tap below to install MYTHOS-26B</string>
-    <string name="progress_installing">Setting up MYTHOS...</string>
+    <string name="progress_installing">Setting up MYTHOS&#8230;</string>
     <string name="progress_complete">Setup complete!</string>
     <string name="action_install">Install MYTHOS-26B</string>
     <string name="action_start">Start Model &amp; Open Editor</string>
+    <string name="action_open_files">Browse Files</string>
+    <string name="action_new_project">New Project</string>
+    <string name="action_terminal">Terminal</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- File explorer -->
+    <string name="file_search_hint">Filter files...</string>
+    <string name="navigate_up">Navigate up</string>
+    <string name="new_file">New file</string>
+    <string name="file_icon_desc">File icon</string>
+    <string name="file_info_dir">%d items</string>
+    <string name="dialog_new_file_title">New File</string>
+    <string name="dialog_create">Create</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="hint_filename">filename.kt (end with / for folder)</string>
+    <string name="error_cannot_open_dir">Cannot open this directory</string>
+    <string name="error_cannot_read_file">Cannot read this file</string>
+    <string name="error_binary_file">Binary files are not supported</string>
+    <string name="error_create_file">Could not create file: %s</string>
+
+    <!-- Code editor -->
+    <string name="error_no_file_open">No file is open</string>
+    <string name="file_saved">File saved</string>
+    <string name="error_save_failed">Save failed: %s</string>
+
+    <!-- Terminal -->
+    <string name="terminal_title">Terminal</string>
+    <string name="terminal_clear">Clear</string>
+    <string name="terminal_input_hint">Enter command</string>
+    <string name="terminal_run">Run</string>
+
+    <!-- New project -->
+    <string name="new_project_title">New Project</string>
+    <string name="new_project_name_label">Project name</string>
+    <string name="new_project_name_hint">my-project</string>
+    <string name="new_project_template_label">Template</string>
+    <string name="new_project_create">Create Project</string>
+    <string name="template_kotlin_console">Kotlin Console App</string>
+    <string name="template_python_script">Python Script</string>
+    <string name="template_web_project">Web Project (HTML/CSS/JS)</string>
+    <string name="template_empty">Empty Project</string>
+    <string name="error_project_name_empty">Please enter a project name</string>
+    <string name="error_project_name_invalid">Name must start with a letter and contain only letters, numbers, hyphens, or underscores</string>
+    <string name="error_project_exists">A project with this name already exists</string>
+    <string name="error_create_project">Could not create project: %s</string>
+    <string name="project_created">Project "%s" created</string>
+
+    <!-- File explorer context menu -->
+    <string name="context_rename">Rename</string>
+    <string name="context_delete">Delete</string>
+    <string name="dialog_rename_title">Rename</string>
+    <string name="dialog_rename">Rename</string>
+    <string name="dialog_delete_title">Delete</string>
+    <string name="dialog_delete_message">Delete "%s"? This cannot be undone.</string>
+    <string name="dialog_delete">Delete</string>
+    <string name="error_file_exists">A file with that name already exists</string>
+    <string name="error_rename_failed">Rename failed</string>
+    <string name="error_delete_failed">Delete failed</string>
+
+    <!-- Recent files -->
+    <string name="recent_files_title">Recent Files</string>
+    <string name="no_recent_files">No recent files</string>
+
+    <!-- Keyboard shortcuts -->
+    <string name="shortcuts_title">Keyboard Shortcuts</string>
+    <string name="dialog_close">Close</string>
+
+    <!-- Git -->
+    <string name="git_title">Git</string>
+    <string name="git_refresh">Refresh</string>
+    <string name="git_init">Init</string>
+    <string name="git_add_all">Add All</string>
+    <string name="git_commit">Commit</string>
+    <string name="git_not_initialized">Not a Git repository</string>
+    <string name="git_init_hint">Tap "Init" to initialize a Git repository here.</string>
+    <string name="git_branch_format">Branch: %s</string>
+    <string name="git_clean">Working tree clean</string>
+    <string name="git_no_commits">No commits yet</string>
+    <string name="git_log_title">Recent Commits</string>
+    <string name="git_added">All files staged</string>
+    <string name="git_commit_message_hint">Commit message</string>
+    <string name="action_git">Git</string>
+
+    <!-- Editor extras -->
+    <string name="goto_line_title">Go to Line</string>
+    <string name="goto_line_hint">Line number</string>
+    <string name="snippets_title">Insert Snippet</string>
+
+    <!-- Logcat -->
+    <string name="logcat_title">Logcat</string>
+    <string name="logcat_clear">Clear</string>
+    <string name="logcat_pause">Pause</string>
+    <string name="logcat_filter_hint">Filter by tag or message...</string>
+    <string name="action_logcat">Logcat</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_editor">Editor</string>
+    <string name="settings_font_size">Font size</string>
+    <string name="settings_word_wrap">Word wrap</string>
+    <string name="settings_line_numbers">Line numbers</string>
+    <string name="settings_section_model">Model</string>
+    <string name="settings_auto_start_model">Auto-start model</string>
+    <string name="settings_model_path">Model path</string>
+    <string name="settings_path_unavailable">Path not available</string>
+    <string name="settings_dark_theme">Dark theme</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_version_format">Version %s</string>
 </resources>
