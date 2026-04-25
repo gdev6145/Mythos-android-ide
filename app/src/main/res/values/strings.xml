@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MYTHOS IDE</string>
+    <string name="status_ready">MYTHOS is ready!</string>
+    <string name="progress_ready">Model installed. Tap below to start.</string>
+    <string name="progress_install_prompt">Tap below to install MYTHOS-26B</string>
+    <string name="progress_installing">Setting up MYTHOS...</string>
+    <string name="progress_complete">Setup complete!</string>
+    <string name="action_install">Install MYTHOS-26B</string>
+    <string name="action_start">Start Model &amp; Open Editor</string>
+</resources>
