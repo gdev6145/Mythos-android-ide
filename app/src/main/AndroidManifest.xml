@@ -33,6 +33,7 @@
         <activity android:name=".SettingsActivity" />
         <activity android:name=".TerminalActivity" />
         <activity android:name=".NewProjectActivity" />
+        <activity android:name=".GitActivity" />
 
         <service
             android:name=".services.ModelService"

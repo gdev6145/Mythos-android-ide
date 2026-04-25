@@ -77,6 +77,27 @@
     <string name="shortcuts_title">Keyboard Shortcuts</string>
     <string name="dialog_close">Close</string>
 
+    <!-- Git -->
+    <string name="git_title">Git</string>
+    <string name="git_refresh">Refresh</string>
+    <string name="git_init">Init</string>
+    <string name="git_add_all">Add All</string>
+    <string name="git_commit">Commit</string>
+    <string name="git_not_initialized">Not a Git repository</string>
+    <string name="git_init_hint">Tap "Init" to initialize a Git repository here.</string>
+    <string name="git_branch_format">Branch: %s</string>
+    <string name="git_clean">Working tree clean</string>
+    <string name="git_no_commits">No commits yet</string>
+    <string name="git_log_title">Recent Commits</string>
+    <string name="git_added">All files staged</string>
+    <string name="git_commit_message_hint">Commit message</string>
+    <string name="action_git">Git</string>
+
+    <!-- Editor extras -->
+    <string name="goto_line_title">Go to Line</string>
+    <string name="goto_line_hint">Line number</string>
+    <string name="snippets_title">Insert Snippet</string>
+
     <!-- Settings -->
     <string name="settings_title">Settings</string>
     <string name="settings_section_editor">Editor</string>

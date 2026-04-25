@@ -78,6 +78,16 @@
             android:paddingVertical="12dp" />
 
         <Button
+            android:id="@+id/btnGit"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/action_git"
+            android:backgroundTint="#F4511E"
+            android:textColor="@color/on_primary"
+            android:paddingVertical="12dp" />
+
+        <Button
             android:id="@+id/btnSettings"
             android:layout_width="240dp"
             android:layout_height="wrap_content"

@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.mythos.ide.util.CodeSnippets
 import com.mythos.ide.util.RecentFilesManager
 import com.mythos.ide.util.TermuxBridge
 import kotlinx.coroutines.CoroutineScope
@@ -225,6 +226,11 @@ class CodeEditorActivity : AppCompatActivity() {
         }
 
         @JavascriptInterface
+        fun showSnippets(lang: String) {
+            runOnUiThread { showSnippetPicker(lang) }
+        }
+
+        @JavascriptInterface
         fun openFile(path: String) {
             runOnUiThread { openFileInTab(path) }
         }
@@ -243,6 +249,24 @@ class CodeEditorActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun showSnippetPicker(language: String) {
+        val snippets = CodeSnippets.getSnippets(language)
+        val labels = snippets.map { "${it.name} - ${it.description}" }.toTypedArray()
+
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.snippets_title))
+            .setItems(labels) { _, which ->
+                val snippet = snippets[which]
+                val escaped = snippet.code
+                    .replace("\\", "\\\\")
+                    .replace("'", "\\'")
+                    .replace("\n", "\\n")
+                    .replace("\r", "")
+                webView.evaluateJavascript("insertSnippet('$escaped')", null)
+            }
+            .show()
     }
 
     private fun showKeyboardShortcutsHelp() {
@@ -482,6 +506,8 @@ class CodeEditorActivity : AppCompatActivity() {
         <button class="secondary" onclick="doRedo()" title="Redo">&#x21AA;</button>
         <button class="secondary" onclick="toggleSearch()">Find</button>
         <button class="secondary" onclick="requestAI()" id="btnAI" title="AI Complete">AI</button>
+        <button class="secondary" onclick="goToLine()" title="Go to line">Ln</button>
+        <button class="secondary" onclick="showSnippets()" title="Snippets">Snip</button>
         <button class="secondary" onclick="showHelp()" title="Keyboard shortcuts">?</button>
         <button onclick="saveFile()">Save</button>
     </div>
@@ -941,6 +967,61 @@ class CodeEditorActivity : AppCompatActivity() {
         document.getElementById('langInfo').textContent = newLang;
         updateLineNumbers();
         editor.focus();
+    }
+
+    // ----- Go to line -----
+    function goToLine() {
+        var lineNum = prompt('Go to line:');
+        if (!lineNum) return;
+        var n = parseInt(lineNum, 10);
+        if (isNaN(n) || n < 1) return;
+
+        var text = editor.innerText;
+        var lines = text.split('\n');
+        if (n > lines.length) n = lines.length;
+
+        var charPos = 0;
+        for (var i = 0; i < n - 1; i++) {
+            charPos += lines[i].length + 1;
+        }
+
+        // Use TreeWalker to find the text node at that position
+        var walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, null, false);
+        var count = 0;
+        while (walker.nextNode()) {
+            var node = walker.currentNode;
+            if (count + node.textContent.length >= charPos) {
+                var offset = charPos - count;
+                var sel = window.getSelection();
+                var range = document.createRange();
+                range.setStart(node, Math.min(offset, node.textContent.length));
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+
+                // Scroll into view
+                var rect = range.getBoundingClientRect();
+                var container = editorScroll;
+                var target = container.scrollTop + rect.top - container.getBoundingClientRect().top - container.clientHeight / 3;
+                container.scrollTo({ top: target, behavior: 'smooth' });
+                break;
+            }
+            count += node.textContent.length;
+        }
+        updateCursorInfo();
+    }
+
+    // ----- Snippets -----
+    function showSnippets() {
+        if (window.AndroidBridge) { window.AndroidBridge.showSnippets(language); }
+    }
+
+    function insertSnippet(code) {
+        editor.focus();
+        document.execCommand('insertText', false, code);
+        modified = true;
+        updateTitle();
+        updateLineNumbers();
     }
 
     // ----- Help -----
