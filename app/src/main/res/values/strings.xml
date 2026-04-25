@@ -11,6 +11,8 @@
     <string name="action_install">Install MYTHOS-26B</string>
     <string name="action_start">Start Model &amp; Open Editor</string>
     <string name="action_open_files">Browse Files</string>
+    <string name="action_new_project">New Project</string>
+    <string name="action_terminal">Terminal</string>
     <string name="action_settings">Settings</string>
 
     <!-- File explorer -->
@@ -31,6 +33,28 @@
     <string name="error_no_file_open">No file is open</string>
     <string name="file_saved">File saved</string>
     <string name="error_save_failed">Save failed: %s</string>
+
+    <!-- Terminal -->
+    <string name="terminal_title">Terminal</string>
+    <string name="terminal_clear">Clear</string>
+    <string name="terminal_input_hint">Enter command</string>
+    <string name="terminal_run">Run</string>
+
+    <!-- New project -->
+    <string name="new_project_title">New Project</string>
+    <string name="new_project_name_label">Project name</string>
+    <string name="new_project_name_hint">my-project</string>
+    <string name="new_project_template_label">Template</string>
+    <string name="new_project_create">Create Project</string>
+    <string name="template_kotlin_console">Kotlin Console App</string>
+    <string name="template_python_script">Python Script</string>
+    <string name="template_web_project">Web Project (HTML/CSS/JS)</string>
+    <string name="template_empty">Empty Project</string>
+    <string name="error_project_name_empty">Please enter a project name</string>
+    <string name="error_project_name_invalid">Name must start with a letter and contain only letters, numbers, hyphens, or underscores</string>
+    <string name="error_project_exists">A project with this name already exists</string>
+    <string name="error_create_project">Could not create project: %s</string>
+    <string name="project_created">Project "%s" created</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>

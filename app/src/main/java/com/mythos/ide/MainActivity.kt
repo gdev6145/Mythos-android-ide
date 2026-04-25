@@ -23,6 +23,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var progressText: TextView
     private lateinit var actionButton: Button
     private lateinit var btnOpenFiles: Button
+    private lateinit var btnNewProject: Button
+    private lateinit var btnTerminal: Button
     private lateinit var btnSettings: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,10 +35,20 @@ class MainActivity : AppCompatActivity() {
         progressText = findViewById(R.id.progressText)
         actionButton = findViewById(R.id.actionButton)
         btnOpenFiles = findViewById(R.id.btnOpenFiles)
+        btnNewProject = findViewById(R.id.btnNewProject)
+        btnTerminal = findViewById(R.id.btnTerminal)
         btnSettings = findViewById(R.id.btnSettings)
 
         btnOpenFiles.setOnClickListener {
             startActivity(Intent(this, FileExplorerActivity::class.java))
+        }
+
+        btnNewProject.setOnClickListener {
+            startActivity(Intent(this, NewProjectActivity::class.java))
+        }
+
+        btnTerminal.setOnClickListener {
+            startActivity(Intent(this, TerminalActivity::class.java))
         }
 
         btnSettings.setOnClickListener {
@@ -88,7 +100,6 @@ class MainActivity : AppCompatActivity() {
             startService(Intent(this, ModelService::class.java))
             startActivity(Intent(this, CodeEditorActivity::class.java))
         }
-        btnOpenFiles.isEnabled = true
     }
 
     private fun showInstallState() {
@@ -96,7 +107,6 @@ class MainActivity : AppCompatActivity() {
         progressText.text = getString(R.string.progress_install_prompt)
         actionButton.text = getString(R.string.action_install)
         actionButton.setOnClickListener { installMythos() }
-        btnOpenFiles.isEnabled = true
     }
 
     private fun installMythos() {

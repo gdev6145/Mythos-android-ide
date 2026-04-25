@@ -29,6 +29,8 @@
         <activity android:name=".CodeEditorActivity" />
         <activity android:name=".FileExplorerActivity" />
         <activity android:name=".SettingsActivity" />
+        <activity android:name=".TerminalActivity" />
+        <activity android:name=".NewProjectActivity" />
 
         <service
             android:name=".services.ModelService"

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:background="@color/primary">
+
+        <ImageButton
+            android:id="@+id/btnNewProjectBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@android:drawable/ic_menu_revert"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/navigate_up"
+            android:tint="@color/on_primary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="@string/new_project_title"
+            android:textColor="@color/on_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/new_project_name_label"
+                android:textSize="14sp"
+                android:textColor="@color/on_surface"
+                android:layout_marginBottom="4dp" />
+
+            <EditText
+                android:id="@+id/etProjectName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/new_project_name_hint"
+                android:inputType="text"
+                android:padding="12dp"
+                android:background="@color/surface"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/new_project_template_label"
+                android:textSize="14sp"
+                android:textColor="@color/on_surface"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="8dp" />
+
+            <RadioGroup
+                android:id="@+id/rgTemplate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/rbKotlinConsole"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/template_kotlin_console"
+                    android:padding="8dp"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/rbPythonScript"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/template_python_script"
+                    android:padding="8dp" />
+
+                <RadioButton
+                    android:id="@+id/rbWebProject"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/template_web_project"
+                    android:padding="8dp" />
+
+                <RadioButton
+                    android:id="@+id/rbEmptyProject"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/template_empty"
+                    android:padding="8dp" />
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/btnCreateProject"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/new_project_create"
+                android:backgroundTint="@color/primary"
+                android:textColor="@color/on_primary"
+                android:paddingVertical="12dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

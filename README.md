@@ -22,9 +22,12 @@ A self-contained Android app that integrates MYTHOS-26B with Termux for offline 
 - Single APK install
 - Termux embedded (no separate app needed)
 - MYTHOS-26B auto-setup on first run
-- Background model service with foreground notification
-- Code editor with dark theme, line numbers, and file save/load
+- Background model service with foreground notification and health monitoring
+- Code editor with syntax highlighting for Kotlin, Java, Python, JavaScript, XML, and more
+- Search and replace within the editor
 - File explorer for browsing and opening project files
+- Built-in terminal for running shell commands
+- Project templates (Kotlin, Python, Web, Empty)
 - Settings screen for editor and model preferences
 - Offline mode support
 
@@ -41,6 +44,8 @@ mythos-android-ide/
 │       │   ├── MainActivity.kt
 │       │   ├── CodeEditorActivity.kt
 │       │   ├── FileExplorerActivity.kt
+│       │   ├── TerminalActivity.kt
+│       │   ├── NewProjectActivity.kt
 │       │   ├── SettingsActivity.kt
 │       │   ├── services/
 │       │   │   └── ModelService.kt
@@ -54,6 +59,8 @@ mythos-android-ide/
 │           │   ├── activity_main.xml
 │           │   ├── activity_editor.xml
 │           │   ├── activity_file_explorer.xml
+│           │   ├── activity_terminal.xml
+│           │   ├── activity_new_project.xml
 │           │   ├── activity_settings.xml
 │           │   └── item_file.xml
 │           ├── mipmap-anydpi-v26/
