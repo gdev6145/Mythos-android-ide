@@ -3,7 +3,10 @@ package com.mythos.ide
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
@@ -15,17 +18,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 class FileExplorerActivity : AppCompatActivity() {
 
     private lateinit var rvFiles: RecyclerView
     private lateinit var tvCurrentPath: TextView
+    private lateinit var etFileSearch: EditText
     private lateinit var adapter: FileAdapter
 
     private var currentDir: File = Environment.getExternalStorageDirectory()
+    private var currentFileList: List<File> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +36,7 @@ class FileExplorerActivity : AppCompatActivity() {
 
         rvFiles = findViewById(R.id.rvFiles)
         tvCurrentPath = findViewById(R.id.tvCurrentPath)
+        etFileSearch = findViewById(R.id.etFileSearch)
 
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
         val btnNewFile = findViewById<ImageButton>(R.id.btnNewFile)
@@ -48,6 +52,33 @@ class FileExplorerActivity : AppCompatActivity() {
 
         btnBack.setOnClickListener { navigateUp() }
         btnNewFile.setOnClickListener { showNewFileDialog() }
+
+        // Toggle search bar on long-press of path
+        tvCurrentPath.setOnClickListener {
+            if (etFileSearch.visibility == View.VISIBLE) {
+                etFileSearch.visibility = View.GONE
+                etFileSearch.text.clear()
+                adapter.submitList(currentFileList)
+            } else {
+                etFileSearch.visibility = View.VISIBLE
+                etFileSearch.requestFocus()
+            }
+        }
+
+        etFileSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val query = s?.toString()?.lowercase() ?: ""
+                if (query.isEmpty()) {
+                    adapter.submitList(currentFileList)
+                } else {
+                    adapter.submitList(currentFileList.filter {
+                        it.name.lowercase().contains(query)
+                    })
+                }
+            }
+        })
 
         val startPath = intent.getStringExtra(EXTRA_START_PATH)
         if (startPath != null) {
@@ -70,8 +101,13 @@ class FileExplorerActivity : AppCompatActivity() {
         currentDir = dir
         tvCurrentPath.text = dir.absolutePath
 
+        // Clear search on directory change
+        etFileSearch.text.clear()
+        etFileSearch.visibility = View.GONE
+
         val files = dir.listFiles()?.toList() ?: emptyList()
         val sorted = files.sortedWith(compareBy<File> { !it.isDirectory }.thenBy { it.name.lowercase() })
+        currentFileList = sorted
         adapter.submitList(sorted)
     }
 

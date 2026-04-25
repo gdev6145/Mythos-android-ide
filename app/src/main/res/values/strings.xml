@@ -16,6 +16,7 @@
     <string name="action_settings">Settings</string>
 
     <!-- File explorer -->
+    <string name="file_search_hint">Filter files...</string>
     <string name="navigate_up">Navigate up</string>
     <string name="new_file">New file</string>
     <string name="file_icon_desc">File icon</string>
@@ -71,6 +72,10 @@
     <!-- Recent files -->
     <string name="recent_files_title">Recent Files</string>
     <string name="no_recent_files">No recent files</string>
+
+    <!-- Keyboard shortcuts -->
+    <string name="shortcuts_title">Keyboard Shortcuts</string>
+    <string name="dialog_close">Close</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>

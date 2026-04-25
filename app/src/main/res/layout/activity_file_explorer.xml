@@ -44,6 +44,20 @@
             android:tint="@color/on_primary" />
     </LinearLayout>
 
+    <EditText
+        android:id="@+id/etFileSearch"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:hint="@string/file_search_hint"
+        android:textSize="14sp"
+        android:paddingHorizontal="16dp"
+        android:background="@color/surface"
+        android:inputType="text"
+        android:singleLine="true"
+        android:visibility="gone"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawablePadding="8dp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFiles"
         android:layout_width="match_parent"

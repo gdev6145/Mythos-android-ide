@@ -2,10 +2,18 @@ package com.mythos.ide
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import android.view.Gravity
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
+import android.widget.HorizontalScrollView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.mythos.ide.util.RecentFilesManager
 import com.mythos.ide.util.TermuxBridge
@@ -18,7 +26,12 @@ import java.io.File
 class CodeEditorActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
+    private lateinit var tabContainer: LinearLayout
     private var currentFilePath: String? = null
+
+    /** Buffers for open tabs: path -> content (unsaved edits tracked in JS) */
+    private val openTabs = LinkedHashMap<String, String>()
+    private var activeTabPath: String? = null
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +39,7 @@ class CodeEditorActivity : AppCompatActivity() {
         setContentView(R.layout.activity_editor)
 
         webView = findViewById(R.id.codeEditor)
+        tabContainer = findViewById(R.id.tabContainer)
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
         webView.addJavascriptInterface(EditorBridge(), "AndroidBridge")
@@ -44,6 +58,12 @@ class CodeEditorActivity : AppCompatActivity() {
         val fileName = currentFilePath?.let { File(it).name } ?: "untitled"
         val language = detectLanguage(fileName)
 
+        // Add initial tab
+        val tabKey = currentFilePath ?: "untitled"
+        openTabs[tabKey] = initialContent
+        activeTabPath = tabKey
+        refreshTabBar()
+
         val html = buildEditorHtml(
             content = initialContent,
             fileName = fileName,
@@ -54,6 +74,109 @@ class CodeEditorActivity : AppCompatActivity() {
         )
 
         webView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val newPath = intent?.getStringExtra(EXTRA_FILE_PATH) ?: return
+        openFileInTab(newPath)
+    }
+
+    private fun openFileInTab(path: String) {
+        RecentFilesManager.addFile(this, path)
+
+        if (openTabs.containsKey(path)) {
+            // Already open, just switch
+            switchToTab(path)
+            return
+        }
+
+        val content = try { File(path).readText() } catch (_: Exception) { "" }
+        openTabs[path] = content
+        activeTabPath = path
+        currentFilePath = path
+        refreshTabBar()
+
+        val fileName = File(path).name
+        val lang = detectLanguage(fileName)
+        val escaped = escapeForJsString(content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;"))
+        webView.evaluateJavascript("switchTab($escaped, '$fileName', '$lang')", null)
+    }
+
+    private fun switchToTab(path: String) {
+        if (path == activeTabPath) return
+        // Save current content from JS before switching
+        webView.evaluateJavascript("editor.innerText") { rawContent ->
+            val content = rawContent?.trim('"')?.replace("\\n", "\n")?.replace("\\t", "\t") ?: ""
+            activeTabPath?.let { openTabs[it] = content }
+
+            activeTabPath = path
+            currentFilePath = path
+            val tabContent = openTabs[path] ?: ""
+            val fileName = File(path).name
+            val lang = detectLanguage(fileName)
+            val escaped = escapeForJsString(tabContent.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;"))
+            runOnUiThread {
+                refreshTabBar()
+                webView.evaluateJavascript("switchTab($escaped, '$fileName', '$lang')", null)
+            }
+        }
+    }
+
+    private fun closeTab(path: String) {
+        openTabs.remove(path)
+        if (openTabs.isEmpty()) {
+            finish()
+            return
+        }
+        if (activeTabPath == path) {
+            val nextPath = openTabs.keys.last()
+            switchToTab(nextPath)
+        }
+        refreshTabBar()
+    }
+
+    private fun refreshTabBar() {
+        tabContainer.removeAllViews()
+        for ((path, _) in openTabs) {
+            val name = if (path == "untitled") "untitled" else File(path).name
+            val isActive = path == activeTabPath
+
+            val tab = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(24, 0, 8, 0)
+                setBackgroundColor(if (isActive) Color.parseColor("#1e1e1e") else Color.parseColor("#2d2d2d"))
+                setOnClickListener { switchToTab(path) }
+            }
+
+            val label = TextView(this).apply {
+                text = name
+                textSize = 12f
+                setTextColor(if (isActive) Color.parseColor("#ffffff") else Color.parseColor("#999999"))
+                typeface = Typeface.DEFAULT
+            }
+
+            val closeBtn = TextView(this).apply {
+                text = "  x"
+                textSize = 12f
+                setTextColor(Color.parseColor("#999999"))
+                setPadding(4, 0, 12, 0)
+                setOnClickListener { closeTab(path) }
+            }
+
+            tab.addView(label)
+            tab.addView(closeBtn)
+
+            // Small separator
+            val sep = android.view.View(this).apply {
+                layoutParams = LinearLayout.LayoutParams(1, LinearLayout.LayoutParams.MATCH_PARENT)
+                setBackgroundColor(Color.parseColor("#3c3c3c"))
+            }
+
+            tabContainer.addView(tab)
+            tabContainer.addView(sep)
+        }
     }
 
     private fun loadFileContent(): String {
@@ -97,6 +220,16 @@ class CodeEditorActivity : AppCompatActivity() {
         }
 
         @JavascriptInterface
+        fun showHelp() {
+            runOnUiThread { showKeyboardShortcutsHelp() }
+        }
+
+        @JavascriptInterface
+        fun openFile(path: String) {
+            runOnUiThread { openFileInTab(path) }
+        }
+
+        @JavascriptInterface
         fun requestCompletion(textBeforeCursor: String) {
             CoroutineScope(Dispatchers.IO).launch {
                 val result = TermuxBridge.complete(textBeforeCursor)
@@ -110,6 +243,26 @@ class CodeEditorActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun showKeyboardShortcutsHelp() {
+        val shortcuts = """
+            |Ctrl+S  Save file
+            |Ctrl+F  Find / Replace
+            |Ctrl+Z  Undo
+            |Ctrl+Y  Redo
+            |Ctrl+H  Show this help
+            |Tab     Insert 4 spaces
+            |Enter   Auto-indent new line
+            |( [ {   Auto-close bracket
+            |AI btn  Request AI code completion
+        """.trimMargin()
+
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.shortcuts_title))
+            .setMessage(shortcuts)
+            .setPositiveButton(getString(R.string.dialog_close), null)
+            .show()
     }
 
     companion object {
@@ -329,6 +482,7 @@ class CodeEditorActivity : AppCompatActivity() {
         <button class="secondary" onclick="doRedo()" title="Redo">&#x21AA;</button>
         <button class="secondary" onclick="toggleSearch()">Find</button>
         <button class="secondary" onclick="requestAI()" id="btnAI" title="AI Complete">AI</button>
+        <button class="secondary" onclick="showHelp()" title="Keyboard shortcuts">?</button>
         <button onclick="saveFile()">Save</button>
     </div>
     <div class="search-bar" id="searchBar">
@@ -681,11 +835,71 @@ class CodeEditorActivity : AppCompatActivity() {
     editor.addEventListener('keyup', updateCursorInfo);
     editor.addEventListener('click', updateCursorInfo);
 
+    // Bracket pairs for auto-close
+    var bracketPairs = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'" };
+    var closingBrackets = new Set([')', ']', '}']);
+
     editor.addEventListener('keydown', function(e) {
         if (e.key === 'Tab') {
             e.preventDefault();
             document.execCommand('insertText', false, '    ');
         }
+
+        // Auto-indent on Enter
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            var sel = window.getSelection();
+            if (!sel.rangeCount) { document.execCommand('insertText', false, '\n'); return; }
+            var range = sel.getRangeAt(0);
+            var preRange = document.createRange();
+            preRange.setStart(editor, 0);
+            preRange.setEnd(range.startContainer, range.startOffset);
+            var textBefore = preRange.toString();
+            var currentLine = textBefore.split('\n').pop() || '';
+            var indent = currentLine.match(/^(\s*)/)[1] || '';
+            var lastChar = textBefore.trim().slice(-1);
+            var extra = '';
+            if (lastChar === '{' || lastChar === '(' || lastChar === '[' || lastChar === ':') {
+                extra = '    ';
+            }
+            document.execCommand('insertText', false, '\n' + indent + extra);
+        }
+
+        // Auto-close brackets
+        if (bracketPairs[e.key] && !e.ctrlKey && !e.metaKey) {
+            // Don't auto-close quotes if we're in the middle of text
+            if (e.key === '"' || e.key === "'") {
+                // Simple heuristic: auto-close only if next char is whitespace/empty/closing bracket
+                var sel2 = window.getSelection();
+                if (sel2.rangeCount > 0) {
+                    var r = sel2.getRangeAt(0);
+                    var afterText = '';
+                    try {
+                        var postRange = document.createRange();
+                        postRange.setStart(r.endContainer, r.endOffset);
+                        postRange.setEnd(editor, editor.childNodes.length);
+                        afterText = postRange.toString();
+                    } catch(ex) {}
+                    var nextChar = afterText.charAt(0);
+                    if (nextChar && nextChar !== ' ' && nextChar !== '\n' && !closingBrackets.has(nextChar)) {
+                        return; // Don't auto-close
+                    }
+                }
+            }
+            e.preventDefault();
+            document.execCommand('insertText', false, e.key + bracketPairs[e.key]);
+            // Move cursor back one position
+            var s = window.getSelection();
+            if (s.rangeCount > 0) {
+                var r = s.getRangeAt(0);
+                r.setEnd(r.startContainer, r.startOffset - 1);
+                r.collapse(false);
+                s.removeAllRanges();
+                s.addRange(r);
+            }
+        }
+
+        // Ctrl shortcuts
         if ((e.ctrlKey || e.metaKey) && e.key === 's') {
             e.preventDefault();
             saveFile();
@@ -693,6 +907,18 @@ class CodeEditorActivity : AppCompatActivity() {
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
             e.preventDefault();
             toggleSearch();
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+            e.preventDefault();
+            doUndo();
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+            e.preventDefault();
+            doRedo();
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
+            e.preventDefault();
+            showHelp();
         }
     });
 
@@ -705,6 +931,22 @@ class CodeEditorActivity : AppCompatActivity() {
     editorScroll.addEventListener('scroll', function() {
         lineNumbers.style.marginTop = (-this.scrollTop) + 'px';
     });
+
+    // ----- Tab switching (called from Kotlin) -----
+    function switchTab(content, newFileName, newLang) {
+        editor.textContent = content;
+        language = newLang;
+        modified = false;
+        fileLabel.textContent = newFileName;
+        document.getElementById('langInfo').textContent = newLang;
+        updateLineNumbers();
+        editor.focus();
+    }
+
+    // ----- Help -----
+    function showHelp() {
+        if (window.AndroidBridge) { window.AndroidBridge.showHelp(); }
+    }
 
     // ----- Undo / Redo -----
     function doUndo() { document.execCommand('undo'); updateLineNumbers(); }
