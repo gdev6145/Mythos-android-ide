@@ -24,6 +24,7 @@ class SettingsActivity : AppCompatActivity() {
         val spinnerFontSize = findViewById<Spinner>(R.id.spinnerFontSize)
         val switchWordWrap = findViewById<Switch>(R.id.switchWordWrap)
         val switchLineNumbers = findViewById<Switch>(R.id.switchLineNumbers)
+        val switchDarkTheme = findViewById<Switch>(R.id.switchDarkTheme)
         val switchAutoStart = findViewById<Switch>(R.id.switchAutoStartModel)
         val tvModelPath = findViewById<TextView>(R.id.tvModelPath)
         val tvVersion = findViewById<TextView>(R.id.tvVersion)
@@ -43,6 +44,7 @@ class SettingsActivity : AppCompatActivity() {
         // Switches
         switchWordWrap.isChecked = prefs.getBoolean(KEY_WORD_WRAP, true)
         switchLineNumbers.isChecked = prefs.getBoolean(KEY_LINE_NUMBERS, true)
+        switchDarkTheme.isChecked = prefs.getBoolean(KEY_DARK_THEME, false)
         switchAutoStart.isChecked = prefs.getBoolean(KEY_AUTO_START_MODEL, false)
 
         // Model path
@@ -67,6 +69,7 @@ class SettingsActivity : AppCompatActivity() {
         val spinnerFontSize = findViewById<Spinner>(R.id.spinnerFontSize)
         val switchWordWrap = findViewById<Switch>(R.id.switchWordWrap)
         val switchLineNumbers = findViewById<Switch>(R.id.switchLineNumbers)
+        val switchDarkTheme = findViewById<Switch>(R.id.switchDarkTheme)
         val switchAutoStart = findViewById<Switch>(R.id.switchAutoStartModel)
 
         val selectedFontIndex = spinnerFontSize.selectedItemPosition
@@ -76,6 +79,7 @@ class SettingsActivity : AppCompatActivity() {
             .putInt(KEY_FONT_SIZE, fontSize)
             .putBoolean(KEY_WORD_WRAP, switchWordWrap.isChecked)
             .putBoolean(KEY_LINE_NUMBERS, switchLineNumbers.isChecked)
+            .putBoolean(KEY_DARK_THEME, switchDarkTheme.isChecked)
             .putBoolean(KEY_AUTO_START_MODEL, switchAutoStart.isChecked)
             .apply()
     }
@@ -86,6 +90,7 @@ class SettingsActivity : AppCompatActivity() {
         const val KEY_WORD_WRAP = "word_wrap"
         const val KEY_LINE_NUMBERS = "line_numbers"
         const val KEY_AUTO_START_MODEL = "auto_start_model"
+        const val KEY_DARK_THEME = "dark_theme"
         const val DEFAULT_FONT_SIZE = 14
 
         val FONT_SIZES = listOf(10, 12, 14, 16, 18, 20, 24)

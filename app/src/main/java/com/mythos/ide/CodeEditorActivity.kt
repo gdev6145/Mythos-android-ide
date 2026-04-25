@@ -7,6 +7,12 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.mythos.ide.util.RecentFilesManager
+import com.mythos.ide.util.TermuxBridge
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class CodeEditorActivity : AppCompatActivity() {
@@ -25,6 +31,9 @@ class CodeEditorActivity : AppCompatActivity() {
         webView.addJavascriptInterface(EditorBridge(), "AndroidBridge")
 
         currentFilePath = intent.getStringExtra(EXTRA_FILE_PATH)
+
+        // Track in recent files
+        currentFilePath?.let { RecentFilesManager.addFile(this, it) }
 
         val prefs = getSharedPreferences(SettingsActivity.PREFS_NAME, Context.MODE_PRIVATE)
         val fontSize = prefs.getInt(SettingsActivity.KEY_FONT_SIZE, SettingsActivity.DEFAULT_FONT_SIZE)
@@ -85,6 +94,21 @@ class CodeEditorActivity : AppCompatActivity() {
         @JavascriptInterface
         fun getFilePath(): String {
             return currentFilePath ?: ""
+        }
+
+        @JavascriptInterface
+        fun requestCompletion(textBeforeCursor: String) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val result = TermuxBridge.complete(textBeforeCursor)
+                withContext(Dispatchers.Main) {
+                    val escaped = result
+                        .replace("\\", "\\\\")
+                        .replace("'", "\\'")
+                        .replace("\n", "\\n")
+                        .replace("\r", "")
+                    webView.evaluateJavascript("insertCompletion('$escaped')", null)
+                }
+            }
         }
     }
 
@@ -301,7 +325,10 @@ class CodeEditorActivity : AppCompatActivity() {
 <body>
     <div class="toolbar">
         <span class="filename" id="fileLabel">$fileName</span>
+        <button class="secondary" onclick="doUndo()" title="Undo">&#x21A9;</button>
+        <button class="secondary" onclick="doRedo()" title="Redo">&#x21AA;</button>
         <button class="secondary" onclick="toggleSearch()">Find</button>
+        <button class="secondary" onclick="requestAI()" id="btnAI" title="AI Complete">AI</button>
         <button onclick="saveFile()">Save</button>
     </div>
     <div class="search-bar" id="searchBar">
@@ -678,6 +705,53 @@ class CodeEditorActivity : AppCompatActivity() {
     editorScroll.addEventListener('scroll', function() {
         lineNumbers.style.marginTop = (-this.scrollTop) + 'px';
     });
+
+    // ----- Undo / Redo -----
+    function doUndo() { document.execCommand('undo'); updateLineNumbers(); }
+    function doRedo() { document.execCommand('redo'); updateLineNumbers(); }
+
+    // ----- AI Completion -----
+    function requestAI() {
+        var btn = document.getElementById('btnAI');
+        btn.textContent = '...';
+        btn.disabled = true;
+
+        // Get text before cursor
+        var sel = window.getSelection();
+        var textBefore = '';
+        if (sel.rangeCount > 0) {
+            var range = sel.getRangeAt(0);
+            var preRange = document.createRange();
+            preRange.setStart(editor, 0);
+            preRange.setEnd(range.startContainer, range.startOffset);
+            textBefore = preRange.toString();
+        } else {
+            textBefore = editor.innerText;
+        }
+
+        // Take last 500 chars as context
+        var context = textBefore.slice(-500);
+        if (window.AndroidBridge) {
+            window.AndroidBridge.requestCompletion(context);
+        } else {
+            btn.textContent = 'AI';
+            btn.disabled = false;
+        }
+    }
+
+    function insertCompletion(text) {
+        var btn = document.getElementById('btnAI');
+        btn.textContent = 'AI';
+        btn.disabled = false;
+
+        if (text) {
+            editor.focus();
+            document.execCommand('insertText', false, text);
+            modified = true;
+            updateTitle();
+            updateLineNumbers();
+        }
+    }
 
     updateLineNumbers();
     </script>

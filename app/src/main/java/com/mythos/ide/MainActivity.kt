@@ -3,19 +3,24 @@ package com.mythos.ide
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.mythos.ide.services.ModelService
+import com.mythos.ide.util.RecentFilesManager
 import com.mythos.ide.util.TermuxBridge
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
@@ -62,6 +67,41 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         checkSetupStatus()
+        populateRecentFiles()
+    }
+
+    private fun populateRecentFiles() {
+        val tvRecentTitle = findViewById<TextView>(R.id.tvRecentTitle)
+        val llRecentFiles = findViewById<LinearLayout>(R.id.llRecentFiles)
+        llRecentFiles.removeAllViews()
+
+        val recentFiles = RecentFilesManager.getExistingRecentFiles(this)
+        if (recentFiles.isEmpty()) {
+            tvRecentTitle.visibility = View.GONE
+            return
+        }
+
+        tvRecentTitle.visibility = View.VISIBLE
+
+        // Show up to 5 most recent
+        recentFiles.take(5).forEach { path ->
+            val file = File(path)
+            val tv = TextView(this).apply {
+                text = file.name
+                textSize = 14f
+                setPadding(16, 12, 16, 12)
+                setTextColor(ContextCompat.getColor(context, R.color.primary))
+                typeface = Typeface.create("monospace", Typeface.NORMAL)
+                setBackgroundResource(android.R.attr.selectableItemBackground)
+                setOnClickListener {
+                    val intent = Intent(context, CodeEditorActivity::class.java).apply {
+                        putExtra(CodeEditorActivity.EXTRA_FILE_PATH, path)
+                    }
+                    startActivity(intent)
+                }
+            }
+            llRecentFiles.addView(tv)
+        }
     }
 
     private fun requestStoragePermission() {

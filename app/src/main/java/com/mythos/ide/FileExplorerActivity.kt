@@ -39,7 +39,8 @@ class FileExplorerActivity : AppCompatActivity() {
 
         adapter = FileAdapter(
             onFileClick = { file -> openFile(file) },
-            onDirClick = { dir -> navigateTo(dir) }
+            onDirClick = { dir -> navigateTo(dir) },
+            onLongClick = { file -> showFileContextMenu(file) }
         )
 
         rvFiles.layoutManager = LinearLayoutManager(this)
@@ -118,6 +119,64 @@ class FileExplorerActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun showFileContextMenu(file: File) {
+        val items = arrayOf(
+            getString(R.string.context_rename),
+            getString(R.string.context_delete)
+        )
+        AlertDialog.Builder(this)
+            .setTitle(file.name)
+            .setItems(items) { _, which ->
+                when (which) {
+                    0 -> showRenameDialog(file)
+                    1 -> showDeleteConfirmation(file)
+                }
+            }
+            .show()
+    }
+
+    private fun showRenameDialog(file: File) {
+        val input = EditText(this).apply {
+            setText(file.name)
+            setPadding(48, 32, 48, 32)
+            selectAll()
+        }
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.dialog_rename_title))
+            .setView(input)
+            .setPositiveButton(getString(R.string.dialog_rename)) { _, _ ->
+                val newName = input.text.toString().trim()
+                if (newName.isNotEmpty() && newName != file.name) {
+                    val target = File(file.parentFile, newName)
+                    if (target.exists()) {
+                        Toast.makeText(this, getString(R.string.error_file_exists), Toast.LENGTH_SHORT).show()
+                    } else if (file.renameTo(target)) {
+                        navigateTo(currentDir)
+                    } else {
+                        Toast.makeText(this, getString(R.string.error_rename_failed), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .setNegativeButton(getString(R.string.dialog_cancel), null)
+            .show()
+    }
+
+    private fun showDeleteConfirmation(file: File) {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.dialog_delete_title))
+            .setMessage(getString(R.string.dialog_delete_message, file.name))
+            .setPositiveButton(getString(R.string.dialog_delete)) { _, _ ->
+                val deleted = if (file.isDirectory) file.deleteRecursively() else file.delete()
+                if (deleted) {
+                    navigateTo(currentDir)
+                } else {
+                    Toast.makeText(this, getString(R.string.error_delete_failed), Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton(getString(R.string.dialog_cancel), null)
+            .show()
+    }
+
     private fun createNewFile(name: String) {
         val newFile = File(currentDir, name)
         try {
@@ -164,7 +223,8 @@ class FileExplorerActivity : AppCompatActivity() {
 
 class FileAdapter(
     private val onFileClick: (File) -> Unit,
-    private val onDirClick: (File) -> Unit
+    private val onDirClick: (File) -> Unit,
+    private val onLongClick: (File) -> Unit = {}
 ) : RecyclerView.Adapter<FileAdapter.ViewHolder>() {
 
     private var items: List<File> = emptyList()
@@ -204,6 +264,7 @@ class FileAdapter(
                 tvInfo.text = formatFileSize(file.length())
                 root.setOnClickListener { onFileClick(file) }
             }
+            root.setOnLongClickListener { onLongClick(file); true }
         }
 
         private fun formatFileSize(bytes: Long): String {
